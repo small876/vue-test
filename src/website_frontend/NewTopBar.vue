@@ -26,9 +26,48 @@
 
             <div class="NavListRight">
                 <nav>
-                    <input class="SearchBar" type="text"><button class="SearchBarBtn">search</button>
+                    <input class="SearchBar" type="text"><button class="SearchBarBtn" @click='Getproducttest'>search</button>
                     <button class="cart" @click="ToCart">購物車</button>          
-                    <button class="userinfo">User</button>
+                    <button class="userinfo" @click="dialog=true" v-show=!isLogin>Login</button>
+
+                    <transition name="modal">
+                        <div class="modal-mask"  v-show="dialog">
+                            <div class="modal-wrapper">
+                                <div class="modal-container">
+
+                                <div class="modal-header">
+                                    <slot name="header">
+                                        <h3>登入</h3>
+                                    </slot>
+                                </div>
+
+                                <div class="modal-body">
+                                    <div><h3>Username</h3><input v-model="username" placeholder="Enter Username"></div>
+                                    <div><h3>Password</h3><input  v-model="password" type="password" placeholder="Enter Password"></div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <slot name="footer">
+                                        <!-- <button @click="showuser">登入</button>  -->
+                                        <button @click="testlogin">登入</button>     
+                                        <button @click="dialog=false">取消</button> 
+                                    </slot>
+                                </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </transition>
+
+                    <div class="dropdown" v-show=isLogin>
+                        <button  class="dropbtn" @click="dropdown=!dropdown">Dropdown<i class="fas fa-chevron-down fa-sm"></i></button>
+                        <div id="myDropdown" class="dropdown-content" v-show=dropdown>
+                            <router-link to="/">Home</router-link>
+                            <router-link to="/OrderHistory">OrderHistory</router-link>
+                            <button class="selectoption" @click="RemoveIdentify">logout</button>
+                        </div>
+                    </div>
+
                 </nav>
 
                 <label for="SlideNavBar">
@@ -40,61 +79,134 @@
     </div>
   </template>
   
-<script>    
+<script>
+    import jwt_decode from 'jwt-decode' 
+    import axios from 'axios'   
     export default {
         name: 'NewTopBar',
         components: {      
         },
         data(){         
-          
+          return{
+            username:null,
+            password:null,
+            dialog:false,
+            isLogin : false,
+            dropdown :false
+        }
         },       
         
         methods:{
-        ToHome(){
-            console.log('ToHome')
-            if(this.$route.path !=''){this.$router.push('')}
-        },
-        ToCart(){
-            if (this.$route.path != '/mycart') {
-                this.$router.push("/mycart");
+            testlogin(){
+                localStorage.setItem("authTokenAccess",123)
+                this.$forceUpdate()
+                this.dialog=false
+            },
+            showuser(){
+                axios.post('http://127.0.0.1:3000/login',  
+                    {"username":this.username,
+                    "password":this.password}
+                ,
+                    // {
+                    //     headers:{
+                    //         'Content-Type':'application/json'
+                    //     },
+                    //     }
+                    ).then(
+                        response => {
+                            if (response.status === 200){
+                                console.log(response.data)  
+                                localStorage.setItem("authTokenAccess",response.data['access'])
+                                this.user=jwt_decode(localStorage.getItem('authTokenAccess'))['username']
+                                console.log('##############################', this.user)
+                                this.username = ''
+                                this.password = ''
+                                this.dialog=false
+                                this.$forceUpdate()
+                            }
+                        },
+                        error => {
+                            console.log('failed', error.message)
+                        }
+                    )
+                console.log({"username":this.username,
+                            "password":this.password })
+            },
+            ToHome(){
+                console.log('ToHome')
+                if(this.$route.path !=''){this.$router.push('')}
+            },
+            ToCart(){
+                if (this.$route.path != '/mycart') {
+                    this.$router.push("/mycart");
+                }
+            },
+            GetIdentify(){
+                axios.post('http://127.0.0.1:3000/login',  {
+                    "username":"webuser", "password":"123456"
+                    },
+                    {
+                        headers:{
+                            'Content-Type':'application/json'
+                        },
+                        }
+                    ).then(
+                        response => {
+                            console.log('Get Token', response.status)
+                            if (response.status === 200){
+                                console.log(response.data)
+                                localStorage.setItem("authTokenAccess",response.data['access'])
+                                this.user=jwt_decode(localStorage.getItem('authTokenAccess'))['username']
+                                console.log('##############################', this.user)
+                                this.isLogin=true
+                                if (this.username === '' & this.password === ''){
+                                console.log('clear')}
+                                this.$forceUpdate()
+                            }
+                        },
+                        error => {
+                            console.log('failed', error.message)
+                        }
+                    )    
+            },  
+            Getproducttest(){ 
+                axios.get('http://127.0.0.1:3000/products',{
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('authTokenAccess'),
+                    }            
+                }).then(
+                    response => {
+                        if (response.status === 200){
+                            console.log(response.data) 
+                        }
+                    },
+                    error => {
+                        console.log('failed', error.message)
+                    })
+
+            },
+            RemoveIdentify(){
+                // localStorage.removeItem("authTokenRefresh")
+                localStorage.removeItem("authTokenAccess")
+                this.isLogin=false
+                // this.$forceUpdate()
+                this.$router.push({
+                    path:''
+                })
             }
         },
-        // GetIdentify(){
-        //     axios.post('http://127.0.0.1:8000/api/token/',  {
-        //             'username':this.username, 'password':this.password
-        //         },
-        //         {
-        //             headers:{
-        //                 'Content-Type':'application/json'
-        //             },
-        //             }
-        //         ).then(
-        //             response => {
-        //                 console.log('Get Token', response.status)
-        //                 if (response.status === 200){                        
-        //                     localStorage.setItem("authTokenRefresh",response.data['refresh']);
-        //                     localStorage.setItem("authTokenAccess",response.data['access'])
-        //                     this.user=jwt_decode(localStorage.getItem('authTokenAccess'))['username']
-        //                     console.log('##############################', this.user)
-        //                     this.login = true
-        //                 }
-        //             },
-        //             error => {
-        //                 console.log('failed', error.message)
-        //             }
-        //         )
-        //         this.show = !this.show
-        //         this.username = ''
-        //         this.password = ''
-        //         if (this.username === '' & this.password === ''){
-        //         console.log('clear')
-        //         }
-        // },  
-        RemoveIdentify(){
-            localStorage.removeItem("authTokenRefresh")
-            localStorage.removeItem("authTokenAccess")
+
+        mounted(){
+            if(localStorage.getItem("authTokenAccess")){
+                this.isLogin = true
+                console.log('has token')
+            } else {
+                this.isLogin = false
+                console.log('didnt has token')
+            }
+            console.log("mounted")
         }
-        },
+        
 }
 
   
@@ -102,6 +214,116 @@
 </script>
   
 <style>
+/*#region ################ modal ##############################*/
+.modal-mask {
+  position: fixed;
+  z-index: 9998;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: table;
+  transition: opacity 0.3s ease;
+}
+
+.modal-wrapper {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.modal-container {
+  width: 600px;
+  margin: 0px auto;
+  padding: 20px 30px;
+  background-color: #fff;
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
+  transition: all 0.3s ease;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.OrderDetail h3{
+  width: 100%;
+  /* margin: 10px 10px; */
+}
+
+.modal-header h3 {
+  margin-top: 0;
+  color: #42b983;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 18px;
+}
+
+
+.modal-body {
+    width: 100%;
+  margin: 20px 0;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 18px
+}
+
+.modal-default-button {
+  float: right;
+}
+
+
+.modal-enter {
+  opacity: 0;
+}
+
+.modal-leave-active {
+  opacity: 0;
+}
+
+.modal-enter .modal-container,
+.modal-leave-active .modal-container {
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
+}
+/* #endregion */
+
+/*#region ############################################## dropdown ################################################## */
+.dropbtn {
+  background-color: inherit;
+  color: white;
+  padding: 0px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.dropbtn:hover, .dropbtn:focus {
+  background-color: inherit;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: block;
+  position: absolute;
+  background-color: #f1f1f1;
+  overflow: auto;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  overflow: hidden;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown a:hover {background-color: #ddd;}
+
+.show {display: block;}
+/*#endregion*/
+
 * {
   margin: 0;
   padding: 0;
@@ -183,6 +405,7 @@ button:active {
     top: 80px;
     left: 0;
     overflow: hidden;
+    z-index: 9999;
 }
 
 #about:hover .second-inform{

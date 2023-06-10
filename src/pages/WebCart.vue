@@ -96,16 +96,31 @@ export default{
         //     // this.$store.dispatch('add', this.n) 如不處理資料判斷的邏輯 可直接調用commit
         //     this.$store.commit('ADD', this.n)
         // }       自己寫methods 也可用mapmutation 
-        redirect(){
-          new Promise((resolve) => {
-            this.PURCHASE()
-            resolve('/');            
-          }).
-          then((resolve)=>{
+        // redirect(){
+        //   new Promise((resolve) => {
+        //     this.PURCHASE()
+        //     resolve('/');            
+        //   }).
+        //   then((resolve)=>{
+        //     this.$router.push({
+        //     path:resolve
+        //     })
+        //   })
+        // },
+        async redirect(){
+         try{
+           await this.PURCHASE()
+            // console.log('no catch!', result)
+          //   this.$router.push({
+          //   path:'/OrderHistory'
+          // })
+          // setTimeout(function() { alert("successful!")}, 3000)         
+          } catch (err) {
+            console.log('catch!',err)
             this.$router.push({
-            path:resolve
-            })
-          })
+            path:'/'
+          }) 
+          }
         },
     
         ...mapMutations({increment:'ADD','CountItemTotalPrice':'CountItemTotalPrice'}), //methods有指定value為n 但這裡沒有指定param所以必須在func回傳

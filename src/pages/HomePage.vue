@@ -12,13 +12,14 @@
                     <!-- <h4>{{ SortType }}</h4> -->
                 </div>
             </div>
-            <div class="itembox" v-for="TestData in TestData" :key="TestData.title">
+            <div class="itembox" v-for="TestData in itemData" :key="TestData._id">
                 <!-- <img src="../assets/pexels-polina-zimmerman-3747279.jpg"> -->
-                <img :src= "TestData.imageURL">
+                <img src= "#">
                 <div class="ItemListDetail">
-                    <p>{{ TestData.title }}</p>
+                    <p>{{ TestData.name}}</p>
                     <p>${{ TestData.price }}</p>
                     <button @click="ItemIncrement(TestData)"><v-icon end >mdi-cart-plus</v-icon></button>
+                    <button @click="testid(TestData)">id</button>
                 </div>
             </div>
         </div>
@@ -69,7 +70,7 @@
   
 <script>
     import { mapMutations, mapActions } from 'vuex'
-    // import axios from 'axios'
+    import axios from 'axios'
     // import RecommendList from '../pages/RecommendList'
     // import WebHeader from '../pages/WebHeader'
     // import MainNav from '../pages/MainNav'
@@ -86,7 +87,8 @@
         data(){
         return{
             SortType:'',
-            TestData:[{
+            itemData:null,
+            Testdata:[{
                 title : 'No1',
                 price : 3000,
                 totalcount:0,
@@ -158,29 +160,32 @@
            
             }
         },
-        
-        // mounted(){
-        //     if (localStorage.getItem("authTokenAccess")){
-        //             this.login = true
-        //     }
-        //     axios.get('http://127.0.0.1:8000/book_data/').then(
-        //         response => {
-        //             console.log('Get ',response.data)
-        //             this.ItemData = response.data
-
-        //         },
-        //         error => {
-        //             console.log('failed', error.message)
-        //         }
-        //     )   
-        // },
+        mounted(){
+            // if (localStorage.getItem("authTokenAccess")){
+            //         this.login = true
+            // }
+            axios.get('http://127.0.0.1:3000/products/', {
+                headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('authTokenAccess'),
+                    }  
+                }).then(
+                response => {
+                    console.log('Get ',response.data)
+                    this.itemData = response.data
+                    console.log('itemdata ',response.data)
+                },
+                error => {
+                    console.log('failed', error.message)
+                }
+            )   
+        },
         watch:{
             SortType:{
                 handler(newValue){
                     if(newValue == 2){
-                        this.TestData.sort(function(a, b) {
-                            var nameA = a.title.toUpperCase(); // ignore upper and lowercase
-                            var nameB = b.title.toUpperCase(); // ignore upper and lowercase
+                        this.itemData.sort(function(a, b) {
+                            var nameA = a.name.toUpperCase(); // ignore upper and lowercase
+                            var nameB = b.name.toUpperCase(); // ignore upper and lowercase
                             if (nameA < nameB) {
                                 return -1;
                             }
@@ -190,20 +195,19 @@
 
                             // names must be equal
                             return 0;
-                            })
+                            })                            
                         }
                     else if (newValue == 3){
-                        this.TestData.sort(function(a, b) {
+                        this.itemData.sort(function(a, b) {
                             if (a.price < b.price) {
-                                return -1;
-                            }
-                            if (a.price > b.price) {
                                 return 1;
                             }
-
-                            // names must be equal
+                            if (a.price > b.price) {
+                                return -1;
+                            }
                             return 0;
                             })
+                            console.log(this.itemData)
                     }
                 }	 //handler會在ishot發生改變時呼叫
 		}
@@ -220,6 +224,8 @@
             path:''
             })
         },
+        testid(testData){console.log('testid',testData._id)},
+
         ToCart(){
             this.$router.push({
             path:'/mycart',

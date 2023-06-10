@@ -2,6 +2,7 @@ import VueRouter from 'vue-router'
 
 import WebCart from '../pages/WebCart'
 import HomePage from '../pages/HomePage'
+import OrderHistory from '../pages/Orderhistory'
 
 
 const router = new VueRouter({
@@ -22,6 +23,10 @@ const router = new VueRouter({
         {                
             path:'/',
             component:HomePage,
+        },
+        {                
+            path:'/OrderHistory',
+            component:OrderHistory,
         },
     ]    
 })

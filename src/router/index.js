@@ -3,6 +3,8 @@ import VueRouter from 'vue-router'
 import WebCart from '../pages/WebCart'
 import HomePage from '../pages/HomePage'
 import OrderHistory from '../pages/Orderhistory'
+import UserUpdate from '../pages/UserInfoUpdate'
+import UserRegister from '../pages/UserRegister'
 
 
 const router = new VueRouter({
@@ -17,7 +19,7 @@ const router = new VueRouter({
                 else{
                     alert('請先登入')
                 }
-            },             
+            },            
             
         },
         {                
@@ -27,6 +29,30 @@ const router = new VueRouter({
         {                
             path:'/OrderHistory',
             component:OrderHistory,
+            beforeEnter:(to, from, next)=>{
+                if (localStorage.getItem("authTokenAccess")){
+                     next()
+                }
+                else{
+                    alert('請先登入')
+                }
+            },         
+        },
+        {                
+            path:'/editor',
+            component:UserUpdate,
+            beforeEnter:(to, from, next)=>{
+                if (localStorage.getItem("authTokenAccess")){
+                     next()
+                }
+                else{
+                    alert('請先登入')
+                }
+            },         
+        }, 
+        {                
+            path:'/register',
+            component:UserRegister,
         },
     ]    
 })

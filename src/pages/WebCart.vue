@@ -1,11 +1,10 @@
 <template>
     <div class="CartContainer">
-        <button @click="ToHome">tohome</button>
         <div class="ItemList">
             <div class="ItemDetail" v-for="item in CartItem" :key="item.id">
                 <input type="checkbox" @click="selectitem(item)" v-model="item.isSelected"> 
                 <img :src="item.imageURL">
-                <h3>${{ item.price }} ,共{{item.totalcount}}件, 共{{item.totalcount*item.price}}元</h3>
+                <h3>{{ item.name }},${{ item.price }} ,共{{item.totalcount}}件, 共{{item.totalcount*item.price}}元</h3>
                 <b-button href="#" variant="gray" @click="ITEMDECREMENT(item)">--</b-button>
                 <b-button href="#" variant="warning" @click="ItemIncrement(item)">Add To Cart(has been)</b-button>
                 <b-button variant="danger" @click="DELETEITEM(item)">delete</b-button>            
@@ -16,8 +15,9 @@
 
         <div class="ItemListTotal">
             <h3>選取的件數:{{ ItemCount }}</h3>
-            <h4>總金額:{{ ItemTotalPrice }}</h4>  
-            <v-btn size="x-large" @click="ShowOrder()"> <v-icon>mdi-cart-check</v-icon>購買</v-btn>             
+            <h4>總金額:{{ ItemTotalPrice }}</h4>
+              
+            <v-btn size="x-large" @click="ShowOrder"> <v-icon>mdi-cart-check</v-icon>購買</v-btn>             
             
         </div>  
 
@@ -54,7 +54,7 @@
             </div>
           </div>
         </div>
-      </transition>
+        </transition>
       <div id="app">  
         <modal v-if="showModal" @close="showModal = false">
    
@@ -76,21 +76,17 @@ export default{
             showModal: false 
         }
     },
-    computed:{
-        
+    computed:{        
         // SumValue(){
         //     return this.$store.getters.TotalSum
         // }       自己寫computed讓template使用 也可用mapstate
         
         ...mapState({'SumValue':'sum', 'TotalPrice':'TotalPrice', 'CartItem':'CartItem',}), // '...'為ES6語法 能把object拆開
         ...mapState(["Order","dialog","checked"]),
-        ...mapGetters(["DisCount","DiscountPrice","ItemTotalPrice","ItemCount"])  //取得getters的functions
+        ...mapGetters(["DisCount","DiscountPrice","ItemTotalPrice","ItemCount"]),  //取得getters的functions
+        
     },
     methods:{
-        ToHome(){
-            this.$router.push({
-            path:'/'
-            })},
         
         // increment(){
         //     // this.$store.dispatch('add', this.n) 如不處理資料判斷的邏輯 可直接調用commit
@@ -109,12 +105,9 @@ export default{
         // },
         async redirect(){
          try{
-           await this.PURCHASE()
-            // console.log('no catch!', result)
-          //   this.$router.push({
-          //   path:'/OrderHistory'
-          // })
-          // setTimeout(function() { alert("successful!")}, 3000)         
+            await this.PURCHASE()
+            this.$router.push({
+            path:'/Orderhistory'})  
           } catch (err) {
             console.log('catch!',err)
             this.$router.push({
@@ -124,44 +117,16 @@ export default{
         },
     
         ...mapMutations({increment:'ADD','CountItemTotalPrice':'CountItemTotalPrice'}), //methods有指定value為n 但這裡沒有指定param所以必須在func回傳
-        ...mapMutations(["ITEMDECREMENT","selectitem","ITEMINCREMENT","SelectCancel","SetOrder","DELETEITEM","PURCHASE","SHOWORDER","CLOSEORDER","SHOWORDER"]),
+        ...mapMutations(["ITEMDECREMENT","selectitem","ITEMINCREMENT","SelectCancel","SetOrder","DELETEITEM","PURCHASE","SHOWORDER","CLOSEORDER"]),
         ...mapActions({ItemIncrement:'ItemIncrement'}),
         ...mapActions(["ShowOrder"])
     },
     beforeRouteLeave(to, from, next){
-                // const answer = window.confirm('Do you really want to leave? you have unsaved changes!')
-                // if (answer) {
-                //     next()
-                // } else {
-                //     next(false)
-                // }
                 next()
                 this.CartItem[0].isSelected = false
                 this.Order = this.Order.splice(0, this.Order.length)
                 console.log(this.Order)
             }    
-            
-    // mounted(){
-    //     axios.get('http://127.0.0.1:8000/book_data/',{
-    //         headers: {
-    //             Authorization: `Bearer ${localStorage.getItem("authTokenAccess")}`                
-    //                 }
-    //             }
-    //         )
-    //         .then(
-    //             response => {
-    //                 if(response.status ==200 ){
-    //                 console.log('Get data', response.data)
-    //                 }
-    //             },
-    //             error => {
-    //                 console.log('failed', error.message)
-    //             }
-    //         ), console.log(`Bearer ${localStorage.getItem("authTokenAccess")}`)
-    // },
-    // beforeDestroy(){
-    //     console.log('cart被銷毀',this.CartItem)
-    // }
 }
 </script>
 <style>

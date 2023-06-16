@@ -3,19 +3,19 @@
         <input type="checkbox" style="display:none"  id="SlideNavBar">
         <div id="TopBar" class="TopBar">
             <div class="NavListLeft">
-                <h3>welcome</h3>
+                <router-link to="/"><h3>welcome</h3></router-link>
                 <div>
                     <ul>
                         <li id="about">關於我們
                             <div class="second-inform">
                                 <div class="secondbox">
                                     <ul>
-                                        <li>123132</li>
-                                        <li>123132</li>                                  
+                                        <li>消息1</li>
+                                        <li>消息2</li>                                  
                                     </ul>
                                     <ul>
-                                        <li>123456</li>
-                                        <li>123456</li>                                  
+                                        <li>消息3</li>
+                                        <li>消息4</li>                                  
                                     </ul>
                                 </div>
                             </div> 
@@ -26,7 +26,7 @@
 
             <div class="NavListRight">
                 <nav>
-                    <input class="SearchBar" type="text"><button class="SearchBarBtn" @click='Getproducttest'>search</button>
+                    <input class="SearchBar" type="text" placeholder="測試用 暫時無法使用" disabled="true"><button class="SearchBarBtn" >search</button>
                     <button class="cart" @click="ToCart">購物車</button>          
                     <button class="userinfo" @click="dialog=true" v-show=!isLogin>Login</button>
 
@@ -42,15 +42,16 @@
                                 </div>
 
                                 <div class="modal-body">
-                                    <div><h3>Username</h3><input v-model="username" placeholder="Enter Username"></div>
+                                    <div><h3>Username</h3><input v-model="account" placeholder="Enter Username"></div>
                                     <div><h3>Password</h3><input  v-model="password" type="password" placeholder="Enter Password"></div>
                                 </div>
 
                                 <div class="modal-footer">
                                     <slot name="footer">
                                         <!-- <button @click="showuser">登入</button>  -->
-                                        <button @click="testlogin">登入</button>     
-                                        <button @click="dialog=false">取消</button> 
+                                        <button @click="showuser">登入</button>     
+                                        <button @click="dialog=false" >取消</button>
+                                        <button @click="UserRegister">註冊</button>
                                     </slot>
                                 </div>
 
@@ -84,11 +85,11 @@
     import axios from 'axios'   
     export default {
         name: 'NewTopBar',
-        components: {      
-        },
+        components: {
+},
         data(){         
           return{
-            username:null,
+            account:null,
             password:null,
             dialog:false,
             isLogin : false,
@@ -97,41 +98,43 @@
         },       
         
         methods:{
-            testlogin(){
-                localStorage.setItem("authTokenAccess",123)
-                this.$forceUpdate()
-                this.dialog=false
+            register(){
+
             },
             showuser(){
-                axios.post('http://127.0.0.1:3000/login',  
-                    {"username":this.username,
-                    "password":this.password}
-                ,
-                    // {
-                    //     headers:{
-                    //         'Content-Type':'application/json'
-                    //     },
-                    //     }
-                    ).then(
-                        response => {
-                            if (response.status === 200){
-                                console.log(response.data)  
-                                localStorage.setItem("authTokenAccess",response.data['access'])
-                                this.user=jwt_decode(localStorage.getItem('authTokenAccess'))['username']
-                                console.log('##############################', this.user)
-                                this.username = ''
-                                this.password = ''
-                                this.dialog=false
-                                this.$forceUpdate()
-                            }
-                        },
-                        error => {
-                            console.log('failed', error.message)
-                        }
-                    )
-                console.log({"username":this.username,
-                            "password":this.password })
-            },
+                if(!this.account || !this.password){
+                    alert('不得為空')
+                } else {
+                        axios.post('http://127.0.0.1:3000/login',  
+                            {"account":this.account,
+                            "password":this.password}
+                            // {
+                            //     headers:{
+                            //         'Content-Type':'application/json'
+                            //     },
+                            //     }
+                            )
+                            .then(
+                                response => {
+                                    if (response.status === 200){
+                                        console.log(response.data)  
+                                        localStorage.setItem("authTokenAccess",response.data['access'])
+                                        this.user=jwt_decode(localStorage.getItem('authTokenAccess'))['username']
+                                        console.log('##############################', this.user)
+                                        this.username = ''
+                                        this.password = ''
+                                        this.dialog = false
+                                        this.isLogin = true
+                                        this.$router.push({
+                                            path:'/'
+                                        })
+                                    } 
+                                })
+                    .catch(error=> {
+                                alert(error.response.data.message)
+                            })
+                }} 
+            ,
             ToHome(){
                 console.log('ToHome')
                 if(this.$route.path !=''){this.$router.push('')}
@@ -141,58 +144,18 @@
                     this.$router.push("/mycart");
                 }
             },
-            GetIdentify(){
-                axios.post('http://127.0.0.1:3000/login',  {
-                    "username":"webuser", "password":"123456"
-                    },
-                    {
-                        headers:{
-                            'Content-Type':'application/json'
-                        },
-                        }
-                    ).then(
-                        response => {
-                            console.log('Get Token', response.status)
-                            if (response.status === 200){
-                                console.log(response.data)
-                                localStorage.setItem("authTokenAccess",response.data['access'])
-                                this.user=jwt_decode(localStorage.getItem('authTokenAccess'))['username']
-                                console.log('##############################', this.user)
-                                this.isLogin=true
-                                if (this.username === '' & this.password === ''){
-                                console.log('clear')}
-                                this.$forceUpdate()
-                            }
-                        },
-                        error => {
-                            console.log('failed', error.message)
-                        }
-                    )    
-            },  
-            Getproducttest(){ 
-                axios.get('http://127.0.0.1:3000/products',{
-                    headers: {
-                        Authorization: 'Bearer ' + localStorage.getItem('authTokenAccess'),
-                    }            
-                }).then(
-                    response => {
-                        if (response.status === 200){
-                            console.log(response.data) 
-                        }
-                    },
-                    error => {
-                        console.log('failed', error.message)
-                    })
-
+            UserRegister(){
+                this.dialog=false
+                this.$router.push("/register")
             },
             RemoveIdentify(){
                 // localStorage.removeItem("authTokenRefresh")
                 localStorage.removeItem("authTokenAccess")
                 this.isLogin=false
-                // this.$forceUpdate()
                 this.$router.push({
-                    path:''
+                    path:'/'
                 })
+                console.log('router')
             }
         },
 

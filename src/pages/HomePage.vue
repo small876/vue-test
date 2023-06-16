@@ -13,17 +13,24 @@
                 </div>
             </div>
             <div class="itembox" v-for="TestData in itemData" :key="TestData._id">
-                <!-- <img src="../assets/pexels-polina-zimmerman-3747279.jpg"> -->
-                <img src= "#">
-                <div class="ItemListDetail">
-                    <p>{{ TestData.name}}</p>
-                    <p>${{ TestData.price }}</p>
-                    <button @click="ItemIncrement(TestData)"><v-icon end >mdi-cart-plus</v-icon></button>
-                    <button @click="testid(TestData)">id</button>
-                </div>
+                    <!-- <img src="../assets/pexels-polina-zimmerman-3747279.jpg"> -->
+                    <img src= "#">
+                    <div class="ItemListDetail">
+                        <p>{{ TestData.name}}</p>
+                        <p>${{ TestData.price }}</p>
+                        <button @click="ItemIncrementAndAlert(TestData)"><v-icon end >mdi-cart-plus</v-icon></button>
+                    </div>
             </div>
+
+            <Transition>
+                <div v-show="hint" class="hint">
+                 <p>加入購物車</p>
+                </div>
+            </Transition>
+  
         </div>
 
+   
         <!-- <div id="banner">
             
         </div>
@@ -78,16 +85,11 @@
     
     export default {
         name: 'HomePage',
-        components: {
-            // RecommendList:RecommendList,
-            // WebHeader:WebHeader,
-            // MainNav:MainNav,
-            // MainContent:MainContent        
-        },
         data(){
         return{
             SortType:'',
             itemData:null,
+            hint:false,
             Testdata:[{
                 title : 'No1',
                 price : 3000,
@@ -161,14 +163,7 @@
             }
         },
         mounted(){
-            // if (localStorage.getItem("authTokenAccess")){
-            //         this.login = true
-            // }
-            axios.get('http://127.0.0.1:3000/products/', {
-                headers: {
-                        Authorization: 'Bearer ' + localStorage.getItem('authTokenAccess'),
-                    }  
-                }).then(
+            axios.get('http://127.0.0.1:3000/products/').then(
                 response => {
                     console.log('Get ',response.data)
                     this.itemData = response.data
@@ -209,7 +204,7 @@
                             })
                             console.log(this.itemData)
                     }
-                }	 //handler會在ishot發生改變時呼叫
+                }	 //handler會在發生改變時呼叫
 		}
             },
 
@@ -217,68 +212,82 @@
         methods:{
             ...mapMutations({ADDCART:'ADDCART'}),
             ...mapActions({ItemIncrement:'ItemIncrement'}),  
+
+            ItemIncrementAndAlert(item){
+                this.ItemIncrement(item)
+                this.hint=true
+                setTimeout(() => this.hint=false, 1000)                
+            },
             /*###################################### Link ##################################################### */
         ToHome(){
             console.log('ToHome')
             this.$router.push({
-            path:''
+            path:'/'
             })
         },
-        testid(testData){console.log('testid',testData._id)},
 
         ToCart(){
             this.$router.push({
             path:'/mycart',
             })
-        },
-        // GetIdentify(){
-        //     axios.post('http://127.0.0.1:8000/api/token/',  {
-        //             'username':this.username, 'password':this.password
-        //         },
-        //         {
-        //             headers:{
-        //                 'Content-Type':'application/json'
-        //             },
-        //             }
-        //         ).then(
-        //             response => {
-        //                 console.log('Get Token', response.status)
-        //                 if (response.status === 200){                        
-        //                     localStorage.setItem("authTokenRefresh",response.data['refresh']);
-        //                     localStorage.setItem("authTokenAccess",response.data['access'])
-        //                     this.user=jwt_decode(localStorage.getItem('authTokenAccess'))['username']
-        //                     console.log('##############################', this.user)
-        //                     this.login = true
-        //                 }
-        //             },
-        //             error => {
-        //                 console.log('failed', error.message)
-        //             }
-        //         )
-        //         this.show = !this.show
-        //         this.username = ''
-        //         this.password = ''
-        //         if (this.username === '' & this.password === ''){
-        //         console.log('clear')
-        //         }
-        // },  
-        RemoveIdentify(){
-            localStorage.removeItem("authTokenRefresh")
-            localStorage.removeItem("authTokenAccess")
         }
-        },
-}
+        }
+    }
 
   
   
 </script>
   
 <style>
+/* #region############################################## recommendlist  ##################################################### */
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
+
+button:hover {
+    transform: scale(1.1);
+  }
+
+button:active {
+    transform: scale(1);
+    box-shadow: inset 0 0 10px 1px rgba(255, 255, 255);
+  }
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+   opacity: 0;
+}
+
+.hint{ 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background-color: #909FA6;
+    border-radius: 10px;
+    position: fixed;
+    left: 50%;
+    top: 20px;
+    z-index: 999;    
+}
+
+.hint p{
+    font-size: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 0;
+} 
+
+/* #endregion */  
 
 .navbar h3{
     display: inline;
@@ -298,14 +307,7 @@
     
 }
 
-button:hover {
-    transform: scale(1.1);
-  }
 
-button:active {
-    transform: scale(1);
-    box-shadow: inset 0 0 10px 1px rgba(255, 255, 255);
-  }
 
 /* #region############################################## recommendlist  ##################################################### */
 .root {
@@ -326,7 +328,7 @@ button:active {
 }
 
 .itembox{
-    width: 200px;
+    width: 300px;
     height: 300px;
     margin: 10px 10px;
     background-color: rgba(192,192,192, 0.7);
@@ -334,10 +336,14 @@ button:active {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    position: relative;
 }
 
 .ItemListDetail {
     display: flex;
+    position: absolute;
+    left: auto;
+    bottom:10px
 }
 
 .ItemListDetail *{

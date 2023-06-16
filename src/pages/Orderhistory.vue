@@ -3,7 +3,7 @@
     <div class="userdetail">
         <p>使用者名稱:{{ responsedata.firstname + responsedata.lastname}}</p>
         <p>生日:{{ responsedata.birth.substring(0,10)}}</p>
-        <p>E-MAIL:{{  }}</p>
+        <RouterLink to="/editor"><button>修改檔案</button></RouterLink>
     </div>
 
     
@@ -32,52 +32,31 @@
 
 <script>
 import axios from 'axios';
+import { RouterLink } from 'vue-router';
 export default{
-    name:"OrderHistory",
-    data(){
-        return{
-        "userdata":[{
-            "firstname":"web",
-            "lastname":"user",
-            "birthday":"2023-06-05",
-            "e-mail":"xxx",
-        }],
-        "responsedata":null,
-        "ordertest":[{
-            "id":"a20230605000001",
-            "price":8880,
-            "context":[{"item1":2,"item2":3}],
-            "imgurl":"#",
-            "orderedtime":"2023-06-05"
-        },{
-            "id":"a20230605000002",
-            "price":8881,
-            "context":[{"item1":2,"item2":3}],
-            "imgurl":"",
-            "orderedtime":"2023-06-05"
-        },{
-            "id":"a20230605000001",
-            "price":8882,
-            "context":[{"item1":2,"item2":3}],
-            "imgurl":"#",
-            "orderedtime":"2023-06-05"
-        }]}
+    name: "OrderHistory",
+    data() {
+        return {
+            "responsedata": null,
+        };
     },
-    mounted(){
-        axios.get('http://127.0.0.1:3000/userinfo',{ 
-            headers: { 
-                    Authorization: 'Bearer ' + localStorage.getItem('authTokenAccess'),
-                } } ).then(
-                response => {
-                    console.log('Get ',response.data)
-                    this.responsedata = response.data
-                    console.log("responsedata",this.responsedata)
-                },
-                error => {
-                    console.log('failed', error.message)
-                }
-            )   
-    }
+    mounted() {
+        axios.get("http://127.0.0.1:3000/userinfo", {
+            headers: {
+                Authorization: "Bearer " + localStorage.getItem("authTokenAccess"),
+            }
+        }).then(response => {
+           
+            console.log("Get ", response.data);
+            this.responsedata = response.data;
+            console.log("responsedata", this.responsedata)
+        })
+        .catch(error => {
+            if (error.response.status == 401){
+            alert('請重新登入')}
+        })
+    },
+    components: { RouterLink }
 }
 </script>
 
@@ -195,4 +174,6 @@ export default{
 .ordercontent>p:nth-child(4){
     font-size: 20px;    
 }
+
+
 </style>

@@ -19,10 +19,9 @@ const actions = {
         }
     },
     ShowOrder(context){
-        // if(state.Order.length != 0){
-        //     context.commit('SHOWORDER')
-        // }
-        context.commit('SHOWORDER')
+        if(state.Order.length != 0){
+            context.commit('SHOWORDER')
+        }
     },
     
 }
@@ -36,6 +35,7 @@ const mutations = {
     },
 
     ITEMINCREMENT(state, item){
+        
         item.totalcount += 1
         console.log('ITEMINCREMENT被調用',item.totalcount,state)
         console.log('item and cartitem', state.CartItem[0] === item)
@@ -99,11 +99,10 @@ const mutations = {
             })();
             console.log("order_send",order_send);
             axios.post('http://127.0.0.1:3000/purchase',order_send,  
-                    {
-                        headers:{
-                            'authorization':localStorage.getItem('authTokenAccess')
-                        },
-                        }
+            { 
+                headers: { 
+                        Authorization: 'Bearer ' + localStorage.getItem('authTokenAccess'),
+                    } }
                     ).then(
                         response => { 
                             if (response.status === 200){
@@ -164,7 +163,7 @@ const getters = {
                 return 0
             }
     },
-    ItemTotalPrice(state){
+    ItemTotalPrice(state){  //can't watch order.item.property changed
         return state.Order.reduce(
             (total, item)=>{
                 return total + item.price*item.totalcount

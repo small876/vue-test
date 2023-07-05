@@ -23,3 +23,4 @@ pnpm-debug.log*
 *.sw?
 src/website_frontend/TopBar.vue
 src/website_frontend/SearchBar.vue
+src/assets

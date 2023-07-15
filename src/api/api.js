@@ -48,26 +48,26 @@ VisitorRequest.interceptors.response.use((response) => {
     return response;
 },
   function (error) {
-    if (error.response.status) {
+    if (error.response) {
       switch (error.response.status) {
         case 400:
           alert('密碼錯誤')
           break
         case 401:
-          alert('請重新登入')
+          console.log(error.response)
+          alert(error.response.data.message)
           break
         case 500:
           alert('伺服器錯誤 請稍後再試!')
           break
         default:
-          console.log(error.message)
+          alert('this',error.message)
       }
     }
     else if (!error.response) {
-      alert("Error:Network Error");
-      return;
+      alert("Error:Network Error")
     }
-    return Promise.reject(error);
+    return Promise.reject(error)
   }
 );
 
@@ -99,19 +99,20 @@ UserRequest.interceptors.response.use(function (response) {
   return response;
 },
   function (error) {
-    if (error.response.status) {
+    if (error.response) {
       switch (error.response.status) {
         case 400:
           alert('密碼錯誤')
           break
         case 401:
-          alert('請重新登入')
+          console.log(error.response)
+          alert(error.response.data.message)
           break
         case 500:
           alert('伺服器錯誤 請稍後再試!')
           break
         default:
-          console.log(error.message)
+          alert('this',error.message)
       }
     }
     else if (!error.response) {
@@ -204,8 +205,7 @@ AdminRequest.interceptors.response.use(function (response) {
       }
     }
     else if (!error.response) {
-      alert("Error:Network Error");
-      return;
+      alert("Error:Network Error");      
     }
     return Promise.reject(error);
   }

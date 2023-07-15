@@ -1,40 +1,26 @@
 <template>
     <div class="orderdetail">
-        <div class="detail-header">
-            <h3>訂單詳情</h3><button @click="back">回朔</button>
-            <div class="control">
-                <button v-show="responsedata.order_status == 'O'" @click="receive">收到訂單</button>
-                <button v-show="responsedata.order_status == 'R'" @click="deal">開始理貨</button>
-                <button v-show="responsedata.order_status == 'D'" @click="delivery">出貨</button>
-                <button v-show="responsedata.order_status == 'S'" @click="complete">訂單完成</button>
-            </div>
-        </div>
-        <div class="detail-body">
-            <p>訂單編號:{{responsedata._id}}</p>
-            <p>訂單日期:{{responsedata.createdAt}}</p>
-            <p>訂單狀態:{{ orderstatus[responsedata.order_status]}}</p>
-            <p>訂單金額:{{responsedata.order_price}}</p>
-            <p>收件人姓名:{{responsedata.receiver}}</p>
-            <p>地址:{{responsedata.address}}</p>
-            <p>電話:{{responsedata.phone_number}}</p>
-            <p>付款方式:{{responsedata.payment}}</p>
-            <div class="wrap">
-                <table>
-                    <tr> 
-                        <td>名稱</td>
-                        <td>原價</td>
-                        <td>數量</td>
-                        <td>成交價</td>
-                    </tr>   
-                    <tr v-for="orderdata in responsedata.orderContent" :key="orderdata._id">
-                        <td>{{ orderdata.product.name}}</td>
-                        <td>{{ orderdata.product.price}}</td>
-                        <td>{{ orderdata.order_quantity}}</td>
-                        <td>{{ orderdata.order_item_price}}</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
+        <b-container class="mx-auto" style="min-width: 25rem; max-width: 40rem">
+            <b-row>
+                <h3>訂單詳情</h3><b-button @click="back">回朔</b-button>
+                <b-button v-if="responsedata.order_status == 'O'" @click="receive">收到訂單</b-button>
+                <b-button v-if="responsedata.order_status == 'R'" @click="deal">開始理貨</b-button>
+                <b-button v-if="responsedata.order_status == 'D'" @click="delivery">出貨</b-button>
+                <b-button v-if="responsedata.order_status == 'S'" @click="complete">訂單完成</b-button>
+            </b-row>
+        </b-container>
+        <b-list-group class="mx-auto" style="min-width: 25rem; max-width: 40rem">
+            <b-list-group-item>訂單編號:{{responsedata._id}}</b-list-group-item>
+            <b-list-group-item>訂單日期:{{responsedata.createdAt}}</b-list-group-item>
+            <b-list-group-item>訂單狀態:{{ orderstatus[responsedata.order_status]}}</b-list-group-item>
+            <b-list-group-item>訂單金額:{{responsedata.order_price}}</b-list-group-item>
+            <b-list-group-item>收件人姓名:{{responsedata.receiver}}</b-list-group-item>
+            <b-list-group-item>地址:{{responsedata.address}}</b-list-group-item>
+            <b-list-group-item>電話:{{responsedata.phone_number}}</b-list-group-item>
+            <b-list-group-item>付款方式:{{responsedata.payment}}</b-list-group-item>
+        </b-list-group>
+        <b-table striped  :fields="field" :items="responsedata.orderContent" class="mx-auto px-2" style="min-width: 25rem; max-width: 40rem">
+        </b-table>
     </div>
     </template>
     
@@ -54,7 +40,21 @@
                 "D":"訂單處理中",
                 "S":"出貨中",
                 "F":"訂單完成",
-            }
+            },
+            field: [
+                {
+                    "key": "product.name",
+                    "label": "name"
+                },
+                {
+                    "key": "order_quantity",
+                    "label": "Quantity"
+                },
+                {
+                    "key": "order_item_price",
+                    "label": "Item_Price"
+                }
+            ]
             };
         },
         created() {
@@ -122,74 +122,9 @@
     
     
     <style scoped>
-    /* #region############################################## header ##################################################### */
-    .detail-header{
-        width: 100vh;
-        display: flex;
-        position: relative;
-        border-bottom: solid 1px rgba(192,192,192,0.3);
-    }
-    
-    .control{
-        position: absolute;
-        right: 10px;
-      
+    *{
+        height: 100%;
+        font-family: 'Noto Sans TC', sans-serif;
     }
 
-    .control button{
-        margin:0px 10px;
-        background-color: rgba(192,192,192,1);
-        border: solid 1px rgba(0,0,0,1);
-        padding: 2px;
-        border-radius:5px
-    }
-
-    /*#endregion########################################################################################################### */
-    
-    /* #region############################################## body ##################################################### */
-    .detail-body p{
-        margin: 30px 0px
-    }
-
-    .detail-body{
-        width: 100vh;
-    }
-
-    .wrap{
-    overflow:hidden;
-    border-radius:10px 10px 0px 0px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.35);
-    }
-
-    table{
-    border-collapse:collapse;
-    }
-
-    th{
-    color:#ffffff;
-    width:25vw;
-    height:75px;
-    }
-
-    td{
-    background-color:#ffffff;
-    width:25vw;
-    height:50px;
-    text-align:center;
-    }
-
-    tr{
-    border-bottom: 1px solid #dddddd;
-    }
-
-
-    tr:nth-of-type(even) td{
-    background-color:#f3f3f3;
-    }
-
-    /*#endregion########################################################################################################### */
-    .orderdetail{
-        width: 1190px;
-        margin: auto;
-    }
     </style>

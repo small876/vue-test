@@ -8,25 +8,33 @@
             <b-form-datepicker id="example-datepicker" v-model="date" class="mb-2"></b-form-datepicker><button @click="filter(date)">查詢</button>
             <p>{{ date }}</p>
         </div>
+
         <h4>所有訂單</h4>
-        <div class="wrap">
-            <table>
-                <tr>
-                    <td>訂單號碼</td>
-                    <td>金額</td>
-                    <td>訂購人</td>
-                    <td>訂單日期</td>
-                    <td>訂單狀態</td>
-                </tr>
-                <tr v-for="orderdata in order " :key="orderdata.index">
-                    <td @click="detail(orderdata._id)"><span>{{ orderdata._id }}</span></td>
-                    <td>{{ orderdata.order_price }}</td>
-                    <td>{{ orderdata.ordering_person }}</td>
-                    <td>{{ orderdata.createdAt.substring(0,10) }}</td>
-                    <td>{{ orderstatus[orderdata.order_status]}}</td>
-                </tr>
-            </table>
-        </div>
+        <b-table striped  :fields="field" :items="order" class="mx-auto px-2">
+            <template #cell(id)="{ item }">
+                <span @click="detail(item._id)" class="pl-2 bg-transparent">
+                    {{ item._id }}
+                </span>
+            </template>
+
+            <template #cell(到貨日期)="{ item }">
+                <span class="bg-transparent">
+                    {{ item.date.substring(0,10) }}
+                </span>
+            </template>
+
+            <template #cell(createdAt)="{ item }" >
+                <span class="bg-transparent">
+                    {{ item.createdAt.substring(0,10) }}
+                </span>
+            </template>
+
+            <template #cell(orderstatus)="{ item }">
+                <span class="bg-transparent">
+                    {{ orderstatus[item.order_status]}}
+                </span>
+            </template>
+        </b-table>
     </div>
 
 </template>
@@ -48,14 +56,23 @@ export default{
                 "D":"訂單處理中",
                 "S":"出貨中",
                 "F":"訂單完成",
-            }
+            },
+            field: [
+                "id",
+                {
+                    "key": "order_price",
+                    "label": "金額"
+                },
+                "到貨日期",
+                'createdAt',
+                'orderstatus'        
+            ]
         }
     },
     methods:{
         async filter(date){
             let response = await OrderFilter(date)
             this.order = response.data
-            console.log(response.data)
         }
         ,
 
@@ -65,10 +82,9 @@ export default{
             })
         }
 },
-    created(){
-        OrderList()
-        .then((response) => this.order = response.data)
-        .catch((error) => console.log(error))
+    async created(){
+        let response = await OrderList()
+        this.order = response.data
     }
 }
 
@@ -76,6 +92,11 @@ export default{
 </script>
 
 <style scoped>
+ *{
+    height: 100%;
+    font-family: 'Noto Sans TC', sans-serif;
+}
+
 label input{
     display: block;
 }
@@ -86,45 +107,9 @@ h4{
     margin: 20px 0px;
 }
 
-.wrap{
-  overflow:hidden;
-  border-radius:10px 10px 0px 0px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.35);
-}
 
-.wrap span:hover{
+.pl-2:hover{
     color: #dddddd;
     cursor: pointer;
 }
-
-table{
-  border-collapse:collapse;
-}
-
-th{
-  color:#ffffff;
-  width:25vw;
-  height:75px;
-}
-
-td{
-  background-color:#ffffff;
-  width:25vw;
-  height:50px;
-  text-align:center;
-}
-
-tr{
-  border-bottom: 1px solid #dddddd;
-}
-
-
-tr:nth-of-type(even) td{
-  background-color:#f3f3f3;
-}
-
-button{
-    border:1px solid rgba(0,0,0,1)
-}
-
 </style>

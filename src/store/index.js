@@ -16,13 +16,7 @@ const actions = {
         if(a==false){
             context.commit('ADDCART', NewItem)
         }
-    },
-    ShowOrder(context){
-        if(state.Order.length != 0){
-            context.commit('SHOWORDER')
-        }
-    },
-    
+    }    
 }
 
 const mutations = {
@@ -32,10 +26,8 @@ const mutations = {
         state.CartItem.push(cartitem)    
     },
 
-    ITEMINCREMENT(state, item){        
+    ITEMINCREMENT(item){        
         item.totalcount += 1
-        console.log('ITEMINCREMENT被調用',item.totalcount,state)
-        console.log('item and cartitem', state.CartItem[0] === item)
     },
     ITEMDECREMENT(state, item){
         item.totalcount -= 1
@@ -43,8 +35,6 @@ const mutations = {
             mutations.DELETEITEM(state, item)
             console.log('delete',state)
         }
-        console.log('ITEMDECREMENT被調用',item.totalcount,item.count,state) 
-        console.log('ordercart',state.Order)
     },
     DELETEITEM(state,item){
         let ItemEmpty = state.CartItem.findIndex((x) => x === item)         
@@ -56,24 +46,18 @@ const mutations = {
     },   
         
     selectitem(state, item){
-       new Promise((resolve) => {
         item.isSelected = !item.isSelected
-        resolve(item)
-       }).then((item)=>{
         if(item.isSelected == true){
-            state.Order.unshift(item)            
-            // console.log('check true, item check:',item.isSelected, state.Order)          
+            state.Order.unshift(item)
         }
         else if(item.isSelected == false){
             let ItemEmpty = state.Order.findIndex((x) => x._id === item._id)         
             state.Order.splice(ItemEmpty, 1)
-            console.log('check false, item check:',item.isSelected, state.Order) 
         }
-    })
-    },
-    
-   
+    }
 }
+    
+
 
 
 

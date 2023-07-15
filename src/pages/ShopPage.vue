@@ -1,10 +1,14 @@
 <template>
     <div class="shop-container">
-        <div class="navrouter">
-            <div class="historyrouter">
-                <router-link to="/"><a>首頁</a></router-link> <a>/</a> <a>商品頁面</a>
-            </div>
-        </div>
+        <b-breadcrumb class="p-2">
+            <b-breadcrumb-item>
+                <b-icon icon="house-fill" scale="1.25" shift-v="1.25" aria-hidden="true"></b-icon>
+                <router-link to="/"><a>首頁</a></router-link>
+            </b-breadcrumb-item>
+            <b-breadcrumb-item active>商品頁面</b-breadcrumb-item>
+        </b-breadcrumb>
+
+        <b-overlay :show="show" rounded="sm">
         <div class="navbar">
             <div class="activity">
                 <h3>排序:</h3>
@@ -13,52 +17,63 @@
                 <!-- <h4>{{ SortType }}</h4> -->
             </div>
         </div>
-        <div class="itemblock">
-            <div class="itembox" v-for="TestData in itemData" :key="TestData._id">
-                <img src="https://picsum.photos/200/300" loading="lazy" @click="showdetail(TestData._id)">
-                <div class="ItemListDetail">
-                    <p>{{ TestData.name }}</p>
-                    <p>${{ TestData.price }}</p>
-                    <button @click="ItemIncrementAndAlert(TestData)"><v-icon end>mdi-cart-plus</v-icon></button>
-                </div>
-            </div>
-        </div>
 
-        <Transition>
-            <div v-show="hint" class="hint">
-                <p>加入購物車</p>
-            </div>
-        </Transition>
+       
+        <div class="mx-auto">
+            <b-card-group deck class="ml-4" style="width: 100%;">
+                <b-card no-body style="max-width: 20rem; min-width: 20rem;" class="ml-1 mr-1 p-2"
+                    img-src="https://picsum.photos/200/300" img-alt="Image" img-top v-for="TestData in itemData"
+                    :key="TestData._id">
+
+                    <b-card-body>
+                        <b-card-title>{{ TestData.name }}</b-card-title>
+                        <b-card-sub-title class="mb-2 mt-1">${{ TestData.price }}</b-card-sub-title>
+                        <b-card-text>
+                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eos nisi, molestias ratione veritatis
+                            tempore facilis, labore minus culpa soluta mollitia itaque maiores unde quae eligendi voluptas
+                            quibusdam. Doloremque, asperiores earum!
+                        </b-card-text>
+                    </b-card-body>
+                    <b-button size="lm" class="mb-2 p-1 mt-2" style="max-width: 10rem;"
+                        @click="ItemIncrementAndAlert(TestData)">
+                        <b-icon icon="cart-plus" aria-hidden="true"></b-icon> 加入購物車
+                    </b-button>
+                </b-card>
+            </b-card-group>
+        </div>
+        <b-alert class="fixed-top ml-4 mt-4" style="max-width: 40rem;" :show="dismissCountDown" variant="info"
+            @dismissed="dismissCountDown = 0" @dismiss-count-down="countDownChanged">
+            加入購物車
+        </b-alert>
+    </b-overlay>
+
     </div>
 </template>
   
 <script>
 import { mapMutations, mapActions } from 'vuex'
-import axios from 'axios'
+import { GetItemList } from '@/api/api'
 
 export default {
     name: 'ShopPage',
     data() {
         return {
-            slide: 0,
-            sliding: null,
+            show:true,
             SortType: '',
             itemData: null,
-            hint: false,
+            dismissCountDown: 0
         }
     },
-    mounted() {
-        axios.get('http://127.0.0.1:3000/products/').then(
-            response => {
-                console.log('Get ', response.data)
-                this.itemData = response.data
-                console.log('itemdata ', response.data)
-            },
-            error => {
-                console.log('failed', error.message)
-            }
-        )
-    },
+    async created() {
+        try{
+            let response = await GetItemList()
+            this.itemData = response.data
+            this.show = false
+        } catch(error) {
+            console.log(error)
+        }
+    }, 
+   
     watch: {
         SortType: {
             handler(newValue) {
@@ -93,22 +108,24 @@ export default {
         }
     },
 
-
     methods: {
         ...mapMutations({ ADDCART: 'ADDCART' }),
         ...mapActions({ ItemIncrement: 'ItemIncrement' }),
 
         ItemIncrementAndAlert(item) {
             this.ItemIncrement(item)
-            this.hint = true
-            setTimeout(() => this.hint = false, 1000)
+            this.dismissCountDown = 1
+        },
+        countDownChanged(dismissCountDown) {
+            this.dismissCountDown = dismissCountDown
         },
 
         showdetail(id) {
             this.$router.push({
                 path: `/ItemDetail/${id}`,
             })
-        }
+        },
+
     }
 }
 
@@ -117,90 +134,9 @@ export default {
 </script>
   
 <style scoped>
-/* #region################################################################################################### */
-* {
-    margin: 0;
-    padding: 0;
+.shop-container{
+    background-color: #FBF3DE
 }
-
-html {
-    height: 100%;
-    background-color: #FBF3DE;
-}
-
-.shop-container {
-    width: 100%;
-    background-color: #FBF3DE;
-}
-
-button:hover {
-    transform: scale(1.1);
-}
-
-button:active {
-    transform: scale(1);
-    box-shadow: inset 0 0 10px 1px rgba(255, 255, 255);
-}
-
-/*#endregion */
-
-/* #region############################################## navrouter  ##################################################### */
-.navrouter {
-    margin-left: 200px;
-    height: 50px;
-    width: 100%;
-    display: block;
-    align-items: center;
-}
-
-.historyrouter a {
-    margin: 0px 5px;
-}
-
-.navrouter a {
-    height: 50px;
-    width: 100%;
-}
-
-/*#endregion*/
-
-/* #region############################################## hint  ##################################################### */
-.v-enter-active {
-    transition: 0.1s;
-}
-
-.v-leave-active {
-    transition: 0.1s;
-    opacity: 0;
-
-}
-
-.v-enter {
-    transform: translateY(-100px)
-}
-
-.hint {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    background-color: #909FA6;
-    border-radius: 10px;
-    position: fixed;
-    left: 50%;
-    top: 20px;
-    z-index: 999;
-}
-
-.hint p {
-    font-size: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 0;
-}
-
-/* #endregion */
 
 /* #region############################################## navbar  ##################################################### */
 .navbar h3 {
@@ -214,6 +150,7 @@ button:active {
     height: 50px;
     width: inherit;
     align-items: center;
+    background-color: #FBF3DE
 }
 
 .navbar input {
@@ -221,54 +158,6 @@ button:active {
     ;
     margin: 0px 10px;
 
-}
-
-/* #endregion */
-
-/* #region############################################## recommendlist  ##################################################### */
-.itemblock {
-    display: flex;
-    margin: 0px 300px;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    overflow: visible;
-}
-
-.itembox {
-    width: 300px;
-    height: 300px;
-    margin: 10px 10px;
-    background-color: rgba(192, 192, 192, 0.7);
-    border-radius: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    position: relative;
-}
-
-.ItemListDetail {
-    display: flex;
-    position: absolute;
-    left: auto;
-    bottom: 10px
-}
-
-.ItemListDetail * {
-    margin: 0px 5px;
-}
-
-.ItemListDetail :last-child {
-    margin-right: 0px;
-}
-
-.itembox img {
-    margin-top: 10px;
-    height: 240px;
-    width: 160px;
-}
-
-.itembox img:hover{ 
-    cursor: pointer;
 }
 
 /* #endregion */

@@ -24,18 +24,6 @@
             </b-carousel>
         </div>
 
-        <div class="homenav">
-            <ul>
-                <li @click="scrollTo('homepic')">
-                    <div class="navigation"></div>
-                </li>
-                <li @click="scrollTo('homepic2')">
-                    <div class="navigation"></div>
-                </li>
-            </ul>
-        </div>
-
-
         <div class="intro">
             <b-card-group deck>
                 <b-card
@@ -110,18 +98,6 @@ export default {
             sliding: null,
         };
     },
-
-    methods: {
-        scrollTo(pos) {
-            this.$refs[pos].scrollIntoView({ behavior: "smooth" });
-        },
-    },
-
-    mounted() {
-        this.$nextTick(() => {
-            window.scrollTo(0, top)
-        })
-    }
 }
 
 

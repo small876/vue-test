@@ -21,12 +21,12 @@
        
         <div class="mx-auto">
             <b-card-group deck class="ml-4" style="width: 100%;">
-                <b-card no-body style="max-width: 20rem; min-width: 20rem;" class="ml-1 mr-1 p-2"
+                <b-card no-body style="max-width: 22rem; min-width: 20rem;" class="ml-1 mr-1 p-2"
                     img-src="https://picsum.photos/200/300" img-alt="Image" img-top v-for="TestData in itemData"
                     :key="TestData._id">
 
                     <b-card-body>
-                        <b-card-title>{{ TestData.name }}</b-card-title>
+                        <b-card-title @click="showdetail(TestData._id)" class="title">{{ TestData.name }}</b-card-title>
                         <b-card-sub-title class="mb-2 mt-1">${{ TestData.price }}</b-card-sub-title>
                         <b-card-text>
                             Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eos nisi, molestias ratione veritatis
@@ -35,13 +35,13 @@
                         </b-card-text>
                     </b-card-body>
                     <b-button size="lm" class="mb-2 p-1 mt-2" style="max-width: 10rem;"
-                        @click="ItemIncrementAndAlert(TestData)">
+                        @click="ItemADDCART(TestData)">
                         <b-icon icon="cart-plus" aria-hidden="true"></b-icon> 加入購物車
                     </b-button>
                 </b-card>
             </b-card-group>
         </div>
-        <b-alert class="fixed-top ml-4 mt-4" style="max-width: 40rem;" :show="dismissCountDown" variant="info"
+        <b-alert class="fixed-top ml-4 mt-4" style="max-width:100% " :show="dismissCountDown" variant="info"
             @dismissed="dismissCountDown = 0" @dismiss-count-down="countDownChanged">
             加入購物車
         </b-alert>
@@ -109,10 +109,10 @@ export default {
     },
 
     methods: {
-        ...mapMutations({ ADDCART: 'ADDCART' }),
-        ...mapActions({ ItemIncrement: 'ItemIncrement' }),
+        ...mapMutations(['ADDCART']),
+        ...mapActions(['ItemIncrement']),
 
-        ItemIncrementAndAlert(item) {
+        ItemADDCART(item) {
             this.ItemIncrement(item)
             this.dismissCountDown = 1
         },
@@ -125,7 +125,6 @@ export default {
                 path: `/ItemDetail/${id}`,
             })
         },
-
     }
 }
 
@@ -158,6 +157,11 @@ export default {
     ;
     margin: 0px 10px;
 
+}
+
+.title:hover{
+    color: #dddddd;
+    cursor: pointer;
 }
 
 /* #endregion */

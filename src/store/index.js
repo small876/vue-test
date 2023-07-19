@@ -26,7 +26,7 @@ const mutations = {
         state.CartItem.push(cartitem)    
     },
 
-    ITEMINCREMENT(item){        
+    ITEMINCREMENT(state,item){        
         item.totalcount += 1
     },
     ITEMDECREMENT(state, item){
@@ -56,10 +56,6 @@ const mutations = {
         }
     }
 }
-    
-
-
-
 
 const state = {
     sum:0,

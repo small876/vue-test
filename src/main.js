@@ -27,7 +27,9 @@ import {
   OverlayPlugin,
   SpinnerPlugin,
   TablePlugin,
-  FormInputPlugin    
+  FormInputPlugin,
+  InputGroupPlugin,
+  FormTextareaPlugin    
   } from 'bootstrap-vue'
 
 Vue.use(BadgePlugin)
@@ -52,6 +54,8 @@ Vue.use(SpinnerPlugin)
 Vue.use(TablePlugin)
 Vue.use(BootstrapVueIcons)
 Vue.use(FormInputPlugin)
+Vue.use(InputGroupPlugin)
+Vue.use(FormTextareaPlugin)
 Vue.use(VueRouter)
 
 

@@ -1,5 +1,11 @@
 <template>
     <div class="orderdetail">
+        <b-breadcrumb class="p-2">
+            <b-breadcrumb-item>
+                <b-icon icon="house-fill" scale="1.25" shift-v="1.25" aria-hidden="true"></b-icon>
+                <router-link to="/admin"><a>訂單</a></router-link>
+            </b-breadcrumb-item>
+        </b-breadcrumb>
         <b-container class="mx-auto" style="min-width: 25rem; max-width: 40rem">
             <b-row>
                 <h3>訂單詳情</h3><b-button @click="back">回朔</b-button>
@@ -17,7 +23,7 @@
             <b-list-group-item>收件人姓名:{{responsedata.receiver}}</b-list-group-item>
             <b-list-group-item>地址:{{responsedata.address}}</b-list-group-item>
             <b-list-group-item>電話:{{responsedata.phone_number}}</b-list-group-item>
-            <b-list-group-item>付款方式:{{responsedata.payment}}</b-list-group-item>
+            <b-list-group-item>付款方式:{{payment[responsedata.payment]}}</b-list-group-item>
         </b-list-group>
         <b-table striped  :fields="field" :items="responsedata.orderContent" class="mx-auto px-2" style="min-width: 25rem; max-width: 40rem">
         </b-table>
@@ -54,7 +60,8 @@
                     "key": "order_item_price",
                     "label": "Item_Price"
                 }
-            ]
+            ],
+            payment: { 0: '無', 1: '貨到付款', 2: '超商繳費' }
             };
         },
         created() {

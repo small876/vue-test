@@ -9,115 +9,131 @@ import WebCart from '@/pages/users/WebCart'
 import OrderHistory from '@/pages/users/Orderhistory'
 import UserUpdate from '@/pages/users/UserInfoUpdate'
 import UserRegister from '@/pages/users/UserRegister'
-import CheckOut from  '@/pages/users/CheckOut'
+import CheckOut from '@/pages/users/CheckOut'
 
 
 
 import AdminLogin from '@/pages/admin/AdminLogin'
 import AdminPage from '@/pages/admin/Admin'
 import AdminOrderDetail from '@/pages/admin/AdminOrderDetail'
+import LaunchPage from '@/pages/admin/Launch'
 
 
 const router = new VueRouter({
-        routes:[
-        {            
-            path:'/mycart',
-            component:WebCart,
-            beforeEnter:(to, from, next)=>{
-                if (localStorage.getItem("authTokenAccess")){
-                     next()
-                }
-                else{
-                    alert('請先登入')
-                }
-            },            
-            
-        },
-        {                
-            path:'/',
-            component:HomePage,
-        },       
-        {                
-            path:'*',
-            component:NotFound,
-        },
-        {                
-            path:'/OrderHistory',
-            component:OrderHistory,
-            beforeEnter:(to, from, next)=>{
-                if (localStorage.getItem("authTokenAccess")){
-                     next()
-                }
-                else{
-                    alert('請先登入')
-                }
-            },         
-        },
-        {                
-            path:'/ShopPage',
-            component:ShopPage
-        },         
-        {                
-            path:'/editor',
-            component:UserUpdate,
-            beforeEnter:(to, from, next)=>{
-                if (localStorage.getItem("authTokenAccess")){
-                     next()
-                }
-                else{
-                    alert('請先登入')
-                }
-            },         
-        }, 
-        {                
-            path:'/register',
-            component:UserRegister,
-        },
-        {                
-            path:'/ItemDetail/:id',
-            component:ItemDetail
-        },
-        {                
-            path:'/adminlogin',
-            component:AdminLogin
-        },
-        {                
-            path:'/admin',
-            component:AdminPage,
-            beforeEnter:(to, from, next)=>{
-                if (localStorage.getItem("adminTokenAccess")){
-                     next()
-                }
-                else{
-                    alert('請先登入')
-                }
-            },         
+    routes: [
+        {
+            path: '/',
+            component: HomePage,
         },
         {
-            path:'/AdminOrderDetail/:id',   
-            component:AdminOrderDetail,
-            beforeEnter:(to, from, next)=>{
-                if (localStorage.getItem("adminTokenAccess")){
-                     next()
-                }
-                else{
-                    alert('請先登入')
-                }
-            },     
+            path: '*',
+            component: NotFound,
         },
         {
-            path:'/CheckOut',   
-            component:CheckOut,
-            beforeEnter:(to, from, next)=>{
-                if (localStorage.getItem("authTokenAccess")){
-                     next()
+            path: '/ShopPage',
+            component: ShopPage
+        },
+        {
+            path: '/register',
+            component: UserRegister,
+        },
+        {
+            path: '/ItemDetail/:id',
+            component: ItemDetail
+        },
+        // ################################################################
+        {
+            path: '/mycart',
+            component: WebCart,
+            beforeEnter: (to, from, next) => {
+                if (localStorage.getItem("authTokenAccess")) {
+                    next()
                 }
-                else{
+                else {
                     alert('請先登入')
                 }
-            },     
+            },
+
+        },
+        {
+            path: '/OrderHistory',
+            component: OrderHistory,
+            beforeEnter: (to, from, next) => {
+                if (localStorage.getItem("authTokenAccess")) {
+                    next()
+                }
+                else {
+                    alert('請先登入')
+                }
+            },
+        },
+        {
+            path: '/editor',
+            component: UserUpdate,
+            beforeEnter: (to, from, next) => {
+                if (localStorage.getItem("authTokenAccess")) {
+                    next()
+                }
+                else {
+                    alert('請先登入')
+                }
+            },
+        },
+
+        {
+            path: '/CheckOut',
+            component: CheckOut,
+            beforeEnter: (to, from, next) => {
+                if (localStorage.getItem("authTokenAccess")) {
+                    next()
+                }
+                else {
+                    alert('請先登入')
+                }
+            },
+        },
+        // ################################################################
+        {
+            path: '/adminlogin',
+            component: AdminLogin
+        },
+        {
+            path: '/admin',
+            component: AdminPage,
+            beforeEnter: (to, from, next) => {
+                if (localStorage.getItem("adminTokenAccess")) {
+                    next()
+                }
+                else {
+                    alert('請先登入')
+                }
+            },
+        },
+        {
+            path: '/AdminOrderDetail/:id',
+            component: AdminOrderDetail,
+            beforeEnter: (to, from, next) => {
+                if (localStorage.getItem("adminTokenAccess")) {
+                    next()
+                }
+                else {
+                    alert('請先登入')
+                }
+            },
+        },
+        {
+            path: '/LaunchPage',
+            component: LaunchPage,
+            beforeEnter: (to, from, next) => {
+                if (localStorage.getItem("adminTokenAccess")) {
+                    next()
+                }
+                else {
+                    alert('請先登入')
+                }
+            },
         }
-    ]    
+    ]
 })
 
 // router.beforeEach((to,from,next)=>{

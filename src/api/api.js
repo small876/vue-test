@@ -1,5 +1,8 @@
 import axios from 'axios'
-const BASEURL = "http://127.0.0.1:3000/"
+const BASEURL = process.env.VUE_APP_API
+
+
+
 
 const VisitorRequest = axios.create(
   {
@@ -9,19 +12,19 @@ const VisitorRequest = axios.create(
 
 const adminlogin = axios.create(
   {
-    baseURL: BASEURL + "admin/"
+  baseURL: BASEURL+"admin/"
   }
 )
 
 const UserRequest = axios.create(
   {
-    baseURL: BASEURL + "user/"
+    baseURL: BASEURL+"user/"
   }
 )
 
 const AdminRequest = axios.create(
   {
-    baseURL: BASEURL + "admin/"
+    baseURL: BASEURL+"admin/"
   }
 )
 
@@ -61,7 +64,7 @@ VisitorRequest.interceptors.response.use((response) => {
           alert('伺服器錯誤 請稍後再試!')
           break
         default:
-          alert('this',error.message)
+          alert(error.message)
       }
     }
     else if (!error.response) {
@@ -112,7 +115,7 @@ UserRequest.interceptors.response.use(function (response) {
           alert('伺服器錯誤 請稍後再試!')
           break
         default:
-          alert('this',error.message)
+          alert(error.message)
       }
     }
     else if (!error.response) {
@@ -160,7 +163,7 @@ adminlogin.interceptors.response.use((response) => {
 )
 
 export const ItemLaunch = (data) => {
-  return AdminRequest.post("/lunched", data)
+  return AdminRequest.post("/launch", data)
 }
 
 export const OrderList = () => {

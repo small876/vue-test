@@ -1,12 +1,16 @@
 <template>
     <div class="container">
         <h3>訂單管理</h3>
-        <label for='account'>訂單查詢</label><br>
-        <input id='account' placeholder="輸入訂單號碼" v-model="account"><br>
+        <b-button>
+            <router-link to="/LaunchPage">
+                新增商品
+            </router-link>
+        </b-button>
         <div>
             <label for="example-datepicker">日期查詢</label>
             <b-form-datepicker id="example-datepicker" v-model="date" class="mb-2"></b-form-datepicker><button @click="filter(date)">查詢</button>
             <p>{{ date }}</p>
+            
         </div>
 
         <h4>所有訂單</h4>
@@ -47,8 +51,6 @@ export default{
     name:"AdminPage",
     data(){
         return{
-            account:null,
-            password:null,
             order:'',
             date:'',
             orderstatus:{

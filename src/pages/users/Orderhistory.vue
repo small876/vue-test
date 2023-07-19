@@ -12,19 +12,14 @@
                             </template>
 
                             <b-card-body>
-                                <b-card-title>{{ responsedata.firstname + responsedata.lastname }}</b-card-title>
+                                <b-card-title>使用者:{{ responsedata.firstname + responsedata.lastname }}</b-card-title>
                                 <b-card-text>
-                                    {{ responsedata.birth }}
+                                    生日:{{ responsedata.birth }}
                                 </b-card-text>
                             </b-card-body>
 
                             <b-card-body>
-                                <RouterLink to="/editor">
-                                    <b-button variant="outline-gray" class="p-2">
-                                        <b-icon icon="cart-check-fill" aria-hidden="true"></b-icon>
-                                        edit
-                                    </b-button>
-                                </RouterLink>
+
                             </b-card-body>
                         </b-card>
                     </div>

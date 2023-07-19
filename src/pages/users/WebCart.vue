@@ -28,7 +28,7 @@
 
     <div v-if="CartItem.length != 0" class="float-right">
       <b-container fluid class="text-center">
-        <b-col md="4" sm="12" class=" p-3">
+        <b-col md="4" sm="12" class="p-3">
           <b-list-group style=" min-width: 25rem">
             <b-list-group-item class="d-flex align-items-center bg-transparent">
               <span class="mr-auto my-2">
@@ -42,14 +42,16 @@
             </b-list-group-item>
           </b-list-group>
         </b-col>
-        <b-col md="4" class="ml-auto p-3">
+
+        <b-col md="4" class=" p-3">
         <router-link to="/CheckOut">
           <b-button variant="outline-gray" class="p-2" v-if="Order.length != 0">
-            <b-icon icon="cart-check-fill" aria-hidden="true" ></b-icon>            
+            <b-icon icon="cart-check-fill" aria-hidden="true"></b-icon>            
               購買  
           </b-button>
         </router-link>
       </b-col>
+
       </b-container>
     </div>
 
@@ -57,7 +59,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapState, mapActions } from 'vuex';
+import { mapGetters, mapMutations, mapState } from 'vuex';
 
 export default {
   name: "WebCart",
@@ -72,7 +74,6 @@ export default {
   },
   methods: {
     ...mapMutations(["ITEMDECREMENT", "selectitem", "ITEMINCREMENT", "DELETEITEM"]),
-    ...mapActions(["ItemIncrement"]),
     test(item) {
       console.log(item)
     }

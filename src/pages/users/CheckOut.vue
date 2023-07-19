@@ -1,6 +1,6 @@
 <template>
     <div class="checkpage">
-        
+
         <div v-if="!itemcheck">
             <div class="itemlist">
                 <b-container fluid class="text-center" style="min-width: 10rem; max-height: 30rem;">
@@ -36,7 +36,7 @@
                                 <h2>折扣後金額:{{ Math.floor(ItemTotalPrice * 0.85) }}</h2>
                             </div>
                             <b-button variant="gray" class="rounded-circle px-2 mt-2">
-                                <b-icon icon="arrow-right" scale="2"  @click="itemcheck = true"></b-icon>
+                                <b-icon icon="arrow-right" scale="2" @click="itemcheck = true"></b-icon>
                             </b-button>
                         </b-col>
                     </b-row>
@@ -45,14 +45,15 @@
         </div>
 
         <div v-if="itemcheck">
-            <b-form style="max-width:40rem" class="mx-auto py-2">              
+            <b-form style="max-width:40rem" class="mx-auto py-2">
 
                 <b-form-group class="mt-1" id="input-group-2" label="收件人姓名:" label-for="input-2">
                     <b-form-input id="input-2" v-model="name" required></b-form-input>
                 </b-form-group>
 
-                <b-form-group class="mt-1" id="input-group-1"  label="收貨日期" label-for="example-datepicker">
-                    <b-form-datepicker id="example-datepicker" v-model="date" class="mb-2" :date-disabled-fn="dateDisabled" required></b-form-datepicker>
+                <b-form-group class="mt-1" id="input-group-1" label="收貨日期" label-for="example-datepicker" >
+                    <b-form-datepicker id="example-datepicker" v-model="date" class="mb-2" :date-disabled-fn="dateDisabled" :min="min" :max="max"
+                        required></b-form-datepicker>
                 </b-form-group>
 
                 <b-form-group class="mt-1" id="input-group-2" label="地址:" label-for="input-2">
@@ -64,15 +65,15 @@
                 </b-form-group>
 
                 <b-form-group class="mt-1" id="input-group-3" label="繳費方式:" label-for="input-3">
-                    <b-form-radio v-model="payment"  name="some-radios" value="1">超商繳費</b-form-radio>
-                    <b-form-radio v-model="payment"  name="some-radios" value="2">貨到付款</b-form-radio>
+                    <b-form-radio v-model="payment" name="some-radios" value="1">超商繳費</b-form-radio>
+                    <b-form-radio v-model="payment" name="some-radios" value="2">貨到付款</b-form-radio>
                 </b-form-group>
 
-                <b-button variant="outline-bold" class="mb-2"  @click="istrue">
-                <b-icon icon="credit-card" aria-hidden="true"></b-icon>送出訂單
+                <b-button variant="outline-bold" class="mb-2" @click="istrue">
+                    <b-icon icon="credit-card" aria-hidden="true"></b-icon>送出訂單
                 </b-button>
             </b-form>
-            
+
         </div>
     </div>
 </template>
@@ -85,6 +86,12 @@ import { UserPurchase } from '@/api/api';
 export default {
     name: 'CheckOut',
     data() {
+        const now = new Date()
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+        const minDate = new Date(today)
+        const maxDate = new Date(today)
+        maxDate.setMonth(maxDate.getMonth() + 1)
+        maxDate.setDate(15)
         return {
             itemcheck: false,
             name: '',
@@ -93,6 +100,8 @@ export default {
             phone: '',
             payment: '',
             fieldsitem: ['name', 'totalcount', 'TotalPrice'],
+            min: minDate,
+            max: maxDate    
         }
     },
     computed: {
@@ -103,7 +112,7 @@ export default {
     },
     methods: {
         ...mapMutations({ increment: 'ADD', 'CountItemTotalPrice': 'CountItemTotalPrice' }), //methods有指定value為n 但這裡沒有指定param所以必須在func回傳
-        
+
         istrue() {
             if (
                 !this.name || !this.date || !this.address || !this.phone) {
@@ -178,14 +187,12 @@ export default {
 
         },
 
-       
-      dateDisabled(ymd, date) {
-        // Disable weekends (Sunday = `0`, Saturday = `6`) and
-        // disable days that fall on the 13th of the month
-        const weekday = date.getDay()
-        const day = date.getDate()
-        return weekday === 0 || weekday === 6 || day === 13
-      }
+
+        dateDisabled(ymd, date) {
+            const weekday = date.getDay()
+            const day = date.getDate()
+            return weekday === 0 || weekday === 6 || day === 13
+        }
     }
 }
 
@@ -195,7 +202,6 @@ export default {
 </script>
 
 <style scoped>
-
 * {
     margin: 0;
     padding: 0;
